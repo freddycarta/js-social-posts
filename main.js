@@ -56,13 +56,13 @@ const posts = [
     }
 ];
 
-const likedPosts = [5,3]
+const likedPosts = []
 
 const containerEl = document.getElementById('container')
 
 containerEl.innerHTML = ''
 
-
+// ciclo per stampare post con elementi e post liked tramite l'id
 
 for (let i = 0; i < posts.length; i++) {
     const post = posts[i]
@@ -71,7 +71,8 @@ for (let i = 0; i < posts.length; i++) {
 
     console.log(likedPosts.includes(id))
     let likeClassName = ''
-    if(likedPosts.includes(id)) {
+
+    if(isPostLiked(post.id)) {
         likeClassName = 'like-button--liked'
     }
 
@@ -95,13 +96,13 @@ for (let i = 0; i < posts.length; i++) {
             <div class="post__footer">
                 <div class="likes js-likes">
                     <div class="likes__cta">
-                        <a class="like-button ${ likeClassName} js-like-button" href="#" data-postid="1">
+                        <a class="like-button ${ likeClassName} js-like-button" href="#" data-postid="${id}" data-target="like-counter-${id}">
                             <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                             <span class="like-button__label">Mi Piace</span>
                         </a>
                     </div>
                     <div class="likes__counter">
-                        Piace a <b id="like-counter-1" class="js-likes-counter">${likes}</b> persone
+                        Piace a <b id="like-counter-${id}" class="js-likes-counter">${likes}</b> persone
                     </div>
                 </div> 
             </div>            
@@ -109,5 +110,52 @@ for (let i = 0; i < posts.length; i++) {
     `
     containerEl.innerHTML += html
 
+}
+// recupero classe per button verde
+const likeButtons = document.querySelectorAll('.js-like-button')
+// console.log(likeButtons)
+
+likeButtons.forEach((el) => {
+    console.log(el)
+    el.addEventListener('click', function (){
+       
+        
+        // recupero id del button
+        const postId = parseInt(this.dataset.postid)
+        console.log(postId)
+        // counter dei like
+        const counterLikeId = `like-counter-${postId}`
+        console.log(counterLikeId)
+        // recupero elemento html
+        const counterEl = document.getElementById(counterLikeId)
+        console.log(counterEl)
+        const likes = parseInt(counterEl.innerHTML)
+        console.log(likes)
+
+
+        
+        // se non è tra i post likati 
+        if(!isPostLiked (postId)) {
+        console.log('post senza like dell utente')
+        // aggiungo classe verde e AGGiungo 1
+        this.classList.add('like-button--liked')
+        counterEl.innerHTML = likes + 1
+    } else {
+        console.log('post con like dell utente')
+        // rimuovo classe verde e tolgo 1
+        this.classList.remove('like-button--liked')
+        counterEl.innerHTML = likes - 1
+        
+    }
+        
+    })
+
+    
+});
+
+// funzione per capire se post ha già il like
+
+function isPostLiked (id) {
+    return likedPosts.includes(id)
 }
 
